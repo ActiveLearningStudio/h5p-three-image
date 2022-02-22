@@ -35,7 +35,22 @@ export default class Dialog extends React.Component {
   }
 
   render() {
+    this.context.triggerXAPI('interacted');
     let dialogClasses = ['h5p-text-dialog'];
+    const scene = this.context.params.scenes.find(scene => {
+      return scene.sceneId === this.props.currentScene;
+    });
+    // trigger completed xapi statement once if all consumed
+    if(!this.context.completed) {
+      const interaction = scene.interactions[this.props.currentInteraction];
+      interaction.consumed = true;
+      const allConsumed = this.context.params.scenes.flatMap(scene => scene.interactions).filter(interaction => interaction.action.library.indexOf('H5P.GoToScene') === -1).every(interaction => interaction.consumed)
+      if(allConsumed) {
+        this.context.triggerXAPI('completed');
+        this.context.completed = true;
+      }
+    }
+
     if (this.props.dialogClasses) {
       dialogClasses = dialogClasses.concat(this.props.dialogClasses);
     }

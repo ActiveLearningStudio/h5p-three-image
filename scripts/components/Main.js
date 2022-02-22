@@ -367,6 +367,8 @@ export default class Main extends React.Component {
             title={ dialogTitle }
             onHideTextDialog={this.hideInteraction.bind(this)}
             dialogClasses={dialogClasses}
+            currentScene={this.props.currentScene}
+            currentInteraction={this.state.currentInteraction}
           >
             <InteractionContent
               currentScene={this.props.currentScene}
@@ -380,6 +382,8 @@ export default class Main extends React.Component {
           <Dialog
             title={ this.context.l10n.sceneDescription }
             onHideTextDialog={  this.handleCloseTextDialog  }
+            currentScene={this.props.currentScene}
+            currentInteraction={this.state.currentInteraction}
           >
             <div dangerouslySetInnerHTML={{__html: this.state.currentText }} />
           </Dialog>
