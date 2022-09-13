@@ -10,6 +10,7 @@ H5P = H5P || {};
 H5P.ThreeImage = (function () {
 
   function Wrapper(params, contentId, extras) {
+    var self = this;
     extras = extras || {};
     this.forceStartScreen = (extras.forceStartScreen !== undefined
       && extras.forceStartScreen >= 0)
@@ -21,7 +22,7 @@ H5P.ThreeImage = (function () {
     // Initialize event inheritance
     H5P.EventDispatcher.call(self);
 
-    let wrapper;
+    self.wrapper = undefined;
     this.behavior = {
       label: {
         showLabel: false,
@@ -70,7 +71,7 @@ H5P.ThreeImage = (function () {
             onSetCameraPos={setCameraPosition}
           />
         </H5PContext.Provider>,
-        wrapper
+        self.wrapper
       );
 
       window.requestAnimationFrame(() => {
@@ -79,8 +80,8 @@ H5P.ThreeImage = (function () {
     };
 
     const createElements = () => {
-      wrapper = document.createElement('div');
-      wrapper.classList.add('h5p-three-sixty-wrapper');
+      self.wrapper = document.createElement('div');
+      self.wrapper.classList.add('h5p-three-sixty-self.wrapper');
 
       this.currentScene = this.params.startSceneId;
       if (this.forceStartScreen) {
@@ -98,7 +99,7 @@ H5P.ThreeImage = (function () {
             onSetCameraPos={setCameraPosition}
           />
         </H5PContext.Provider>,
-        wrapper
+        self.wrapper
       );
     };
 
@@ -125,44 +126,44 @@ H5P.ThreeImage = (function () {
             onSetCameraPos={setCameraPosition}
           />
         </H5PContext.Provider>,
-        wrapper
+        self.wrapper
       );
     };
 
     this.attach = ($container) => {
-      if (!wrapper) {
+      if (!self.wrapper) {
         createElements();
       }
 
       // Append elements to DOM
-      $container[0].appendChild(wrapper);
+      $container[0].appendChild(self.wrapper);
       $container[0].classList.add('h5p-three-image');
     };
 
     this.getRect = () => {
-      return wrapper.getBoundingClientRect();
+      return self.wrapper.getBoundingClientRect();
     };
 
     this.on('resize', () => {
-      const isFullscreen = wrapper.parentElement.classList.contains('h5p-fullscreen') || wrapper.parentElement.classList.contains('h5p-semi-fullscreen');
+      const isFullscreen = self.wrapper.parentElement.classList.contains('h5p-fullscreen') || self.wrapper.parentElement.classList.contains('h5p-semi-fullscreen');
       const rect = this.getRect();
       // Fullscreen should use all of the space
       const ratio = (isFullscreen ? (rect.height / rect.width) : (9 / 16));
 
-      wrapper.style.height = (isFullscreen ? '100%' : ((rect.width * ratio) + 'px'));
+      self.wrapper.style.height = (isFullscreen ? '100%' : ((rect.width * ratio) + 'px'));
 
       // Apply separate styles for mobile
       if (rect.width <= 480)  {
-        wrapper.classList.add('h5p-phone-size');
+        self.wrapper.classList.add('h5p-phone-size');
       }
       else {
-        wrapper.classList.remove('h5p-phone-size');
+        self.wrapper.classList.remove('h5p-phone-size');
       }
       if (rect.width < 768)  {
-        wrapper.classList.add('h5p-medium-tablet-size');
+        self.wrapper.classList.add('h5p-medium-tablet-size');
       }
       else {
-        wrapper.classList.remove('h5p-medium-tablet-size');
+        self.wrapper.classList.remove('h5p-medium-tablet-size');
       }
 
       // Resize scene
@@ -170,12 +171,12 @@ H5P.ThreeImage = (function () {
         return;
       }
 
-      const updatedRect = wrapper.getBoundingClientRect();
+      const updatedRect = self.wrapper.getBoundingClientRect();
       this.threeSixty.resize(updatedRect.width / updatedRect.height);
     });
 
     this.getRatio = () => {
-      const rect = wrapper.getBoundingClientRect();
+      const rect = self.wrapper.getBoundingClientRect();
       return (rect.width / rect.height);
     };
 
